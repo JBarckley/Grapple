@@ -5,8 +5,6 @@ using UnityEngine;
 public class PlayerGroundedState : PlayerState
 {
 
-    Collider2D ground = null;
-
     public PlayerGroundedState(Player player, PlayerStateMachine stateMachine, PlayerData playerData, string stateName) : base(player, stateMachine, playerData, stateName)
     {
     }
@@ -25,10 +23,10 @@ public class PlayerGroundedState : PlayerState
         // reset coyote frames when player is grounded
         playerData.coyoteFrames = 45f;
 
-        player.Ground(out ground);
-        Debug.Log(ground);
+        player.Ground(out Collider2D ground);
         if (ground != null && ground.TryGetComponent<IMoveableObject>(out IMoveableObject moveableObject))
         {
+            //player.transform.position -= new Vector3(0.014f, 0);
             player.transform.SetParent(ground.transform, true);
         }
 
@@ -43,7 +41,6 @@ public class PlayerGroundedState : PlayerState
     {
         base.Exit();
 
-        ground = null;
         player.transform.SetParent(null);
     }
 

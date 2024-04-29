@@ -8,7 +8,7 @@ using GrappleGame.Math;
 public class MovingPlatform : MonoBehaviour, IMoveableObject
 {
     public MovingPlatformData data;
-    public Vector2 Velocity { get; private set; }
+    public Vector2 DeltaX { get; private set; }
 
     private readonly string baseFilePath = "Assets/Scripts/Effects/Object Effects/Moving Platform/";
     public string filePath = "";
@@ -51,16 +51,16 @@ public class MovingPlatform : MonoBehaviour, IMoveableObject
         transform.position = Vector2.Lerp(previousPoint, currentPoint, t);
         // what portion of the path from current node to previous node is the most recent "instant change in position" aka "slope of the position graph" aka "velocity"
         // Note on this:
-        // what's not said here is that deltaT being created from the difference in 't'!! not 'time' means that it respects the changes in speed and we're not assuming linear x(t)
-        Vector2 _velocity = deltaT * currentPath;
+        // what's not said here is that deltaX being created from the difference in 't'!! not 'time' means that it respects the changes in speed and we're not assuming linear x(t)
+        Vector2 _deltaX = deltaT * currentPath;
         // at the transition between nodes velocity can increase to 100x the intended value, so we disregard these values in case they happen
-        if (_velocity.magnitude < 1f) { Velocity = _velocity; }
+        if (_deltaX.magnitude < 1f) { DeltaX = _deltaX; }
     }
 
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.red;
-        Gizmos.DrawLine(transform.position, transform.position + (Vector3)Velocity);
+        Gizmos.DrawLine(transform.position, transform.position + (Vector3)GetVelocity());
         //Gizmos.color = Color.blue;
         //Gizmos.DrawLine(transform.position, transform.position + (Vector3)(data[currentNode] - data[previousNode]));
     }
@@ -77,10 +77,18 @@ public class MovingPlatform : MonoBehaviour, IMoveableObject
         data = AssetDatabase.LoadAssetAtPath<MovingPlatformData>(filePath);
     }
 
-    public Vector2 GetVelocity()
+    public Vector2 GetDeltaX()
     {
         //Debug.Log(Velocity);
-        return Velocity;
+        return DeltaX;
+    }
+
+    public Vector2 GetVelocity()
+    {
+        // this is the derivative of x(t) = t * t * t * (t * (6f * t - 15f) + 10f);
+        float _velocity = 30 * time * time * ((time * time) - (2 * time) + 1);
+        Vector2 _velocityDirection = (data[currentNode] - data[previousNode]).normalized;
+        return _velocityDirection * _velocity * 2;
     }
 
     public Transform GetTransform()

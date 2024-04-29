@@ -66,7 +66,7 @@ public class Grapple : MonoBehaviour
             aimVec = new Vector2(player.InputHandler.RawMoveVector.x, 1);
         }
         aimVec.Normalize();
-        aimVec *= 4;
+        aimVec *= player.playerData.grapplingHookLength;
 
         // see if there is any grappleable spots
 
@@ -109,7 +109,7 @@ public class Grapple : MonoBehaviour
             if (grappledObject.TryGetComponent<IMoveableObject>(out moveableObject))
             {
                 Debug.Log("grapple hit moveable object " + moveableObject);
-                attachedPlatformVelocity = moveableObject.GetVelocity();
+                attachedPlatformVelocity = moveableObject.GetDeltaX();
                 Hook.transform.SetParent(grappledObject.transform);
             }
         }
@@ -197,7 +197,7 @@ public class Grapple : MonoBehaviour
         {
             if (moveableObject != null)
             {
-                targetPos += moveableObject.GetVelocity();
+                targetPos += moveableObject.GetDeltaX();
                 //Debug.Log(moveableObject.GetVelocity() + " " + targetPos);
             }
 
@@ -254,8 +254,11 @@ public class Grapple : MonoBehaviour
             //GizmoLinePoints.Add(new Tuple<Vector2, Vector2>(transform.position, transform.position + (Vector3)rb.velocity));
             // finally set the player's state to the grappling state.
             player.StateMachine.ToState(player.GrappleState);
-            if (moveableObject != null) { player.transform.SetParent(moveableObject.GetTransform()); }
-            player.transform.localScale = Vector3.one;
+
+            if (moveableObject != null) 
+            { 
+                player.transform.SetParent(moveableObject.GetTransform()); 
+            }
         }
         // if the hook doesn't hit start lerping back
         if (!hit)

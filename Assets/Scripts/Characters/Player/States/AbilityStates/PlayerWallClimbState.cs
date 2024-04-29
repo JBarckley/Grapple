@@ -32,6 +32,12 @@ public class PlayerWallClimbState : PlayerState
             player.transform.position += Vector3.up * 0.055f;
         }
 
+        player.Wall(out Collider2D wall);
+        if (wall != null && wall.TryGetComponent<IMoveableObject>(out IMoveableObject moveableObject))
+        {
+            player.transform.SetParent(wall.transform);
+        }
+
         player.AnimationHandler.WallGrab();
 
         /* sometimes when you enter the wallclimb state, you're a variable x distance smaller than the wallcheck's width away from the wall.
@@ -52,6 +58,8 @@ public class PlayerWallClimbState : PlayerState
 
         // reenable physics (gravity) once we've stopped climbing the wall
         player.rb.gravityScale = 1.3f;
+
+        player.transform.SetParent(null);
 
         player.InputHandler.PlayerWallDetach -= OnWallDetach;
     }

@@ -228,16 +228,7 @@ public class Player : MonoBehaviour
         // if something does, it is the ground so we return the amount of overlaps (which is indirectly true or false of any exist)
         //return Physics2D.OverlapCircle(groundCheck.transform.position, 0.02f, groundLayer);
         Vector2 groundCheckPosition = groundCheck.transform.position;
-        return Physics2D.OverlapArea(new Vector2(groundCheckPosition.x - 0.15f, groundCheckPosition.y), new Vector2(groundCheckPosition.x + 0.15f, groundCheckPosition.y - 0.03f), groundLayer);
-
-        /*
-        Collider2D[] results = new Collider2D[5];
-        ContactFilter2D contactFilter = new ContactFilter2D();
-        contactFilter.layerMask = groundLayer;
-        capsuleCollider.OverlapCollider(contactFilter, results);
-        return results[0] != null;
-        */
-
+        return Physics2D.OverlapArea(new Vector2(groundCheckPosition.x - 0.15f, groundCheckPosition.y), new Vector2(groundCheckPosition.x + 0.15f, groundCheckPosition.y - 0.01f), groundLayer);
     }
 
     public void Ground(out Collider2D ground)
@@ -245,15 +236,6 @@ public class Player : MonoBehaviour
 
         RaycastHit2D _ground = Physics2D.Raycast(transform.position, Vector2.down, 1f, groundLayer);
         ground = _ground.collider;
-
-        /*
-        Collider2D[] results = new Collider2D[5];
-        ContactFilter2D contactFilter = new ContactFilter2D();
-        contactFilter.layerMask = groundLayer;
-        capsuleCollider.OverlapCollider(contactFilter, results);
-        //Debug.Log(results[0]);
-        ground = results[0];
-        */
     }
 
     public bool IsWalled()
@@ -271,6 +253,12 @@ public class Player : MonoBehaviour
         }
 
         return walled;
+    }
+
+    public void Wall(out Collider2D wall)
+    {
+        RaycastHit2D _wall = Physics2D.Raycast(wallCheck.transform.position, FacingDirection * Vector2.right, 1f, wallLayer);
+        wall = _wall.collider;
     }
 
     public bool IsDead()
@@ -329,99 +317,6 @@ public class Player : MonoBehaviour
             t = t * t * t * (t * (6f * t - 15f) + 10f);
         }
     }
-
-    /*
-    public IEnumerator LerpHook(Vector2 targetPos, float duration, bool hit)
-    {
-        float time = 0;
-        float t = 0;
-        Vector3 startPos = transform.position;
-
-        AnimationHandler.GrappleAir();
-        GrappleRope.enabled = true;
-
-        while (time < duration)
-        {
-            yield return null;
-            Hook.transform.position = Vector3.Lerp(startPos, targetPos, t);
-            time += Time.deltaTime;
-            t = time / duration;
-            t = t * t;
-            //GrappleState.DrawChain();
-        }
-        Hook.transform.position = targetPos;
-        // if the grapple hits apply an impulse force to the player
-        if (hit)
-        {
-            // unit tangent of the vector perpindicular to the line between the hook and the player
-            Vector2 nTan = Vector3.Normalize(Vector2.Perpendicular(Hook.transform.position - transform.position));
-            if (rb.velocity.magnitude < 3.0f)
-            {
-                Vector2 minV = new Vector2(3 * Mathf.Sign(nTan.x), 0);
-                // if the player is stationary and facing left, make the minV (-3, 0)
-                if (transform.right.x > 0) { minV *= -1; }
-                rb.velocity = minV;
-            }
-            /*
-             *      Idea behind incoming math:
-             *      
-             *      I want to give the player a scaled inpulse force when they first grapple... through iteration I've found it makes the mechanic feel better.
-             *      The scaling factor I settled on here is slightly altered whether the player is moving slow or fast. If you have a lot of speed, it will go into
-             *      the grapple, so I don't need to give you as much of a boost. Thus, we scale a littl less.
-             *      
-             *      The last part of this (which is performed first) is that we dont want players who have positive y velocity to be rewarded with speed...
-             *      Without this qualification, a player who jumps and grapples at the peak of their jump would be given less speed than a player who
-             *      grapples the first moment they recieve y velocity, which doesn't feel right. So we make sure y velocity can at maximum be 0.
-             *      
-             *      The function 9 / rb.velocity.magnitude just came to be over iteration
-             * 
-             *
-
-            if (transform.right.x < 0)
-            {
-                rb.velocity = new Vector2(Mathf.Clamp(rb.velocity.x, Mathf.NegativeInfinity, 0), Mathf.Clamp(rb.velocity.y, Mathf.NegativeInfinity, 0));
-            }
-            else
-            {
-                rb.velocity = new Vector2(Mathf.Clamp(rb.velocity.x, 0, Mathf.Infinity), Mathf.Clamp(rb.velocity.y, Mathf.NegativeInfinity, 0));
-            }
-            //rb.velocity = new Vector2(Mathf.Clamp(rb.velocity.x, ), Mathf.Clamp(rb.velocity.y, Mathf.NegativeInfinity, 0));
-            float scalingFactor = Mathf.Clamp(9 / rb.velocity.magnitude, 1.5f, 3.0f);
-            rb.velocity = Vector3.Project(rb.velocity * scalingFactor, nTan);
-            //GizmoLinePoints.Add(new Tuple<Vector2, Vector2>(transform.position, transform.position + (Vector3)rb.velocity));
-            // finally set the player's state to the grappling state.
-            StateMachine.ToState(GrappleState);
-        }
-        // if the hook doesn't hit start lerping back
-        if (!hit)
-        {
-            time = 0;
-            t = 0;
-            startPos = Hook.transform.position;
-            while (time < duration)
-            {
-                Hook.transform.position = Vector3.Lerp(startPos, transform.position, t);
-                time += Time.deltaTime;
-                t = time / duration;
-                t = t * t * t;
-                //GrappleState.DrawChain();
-                yield return null;
-            }
-            GrappleState.DestroyGrapple();
-
-            // if we dont hit the grapple we either return to a grounded movement animation or a air falling animation:
-            if (IsGrounded())
-            {
-                AnimationHandler.Move();
-            }
-            else if (!AnimationHandler.airAnim)
-            {
-                AnimationHandler.StartCoroutine(AnimationHandler.AirAnimation());
-                AnimationHandler.airAnim = true;
-            }
-        }
-    }
-    */
 
     public IEnumerator Buffer(float time)
     {

@@ -10,7 +10,7 @@ public class PlayerData : ScriptableObject
     public float movementVelocity = 2.5f;
     public float jumpingPower = 5f;
     public float wallSlideSpeed = 1.6f;
-    public float grapplingHookLength = 4f;
+    public float grapplingHookLength = 2f;
     [Header("Don't change these, they will reset to these values")]
     public float coyoteFrames = 45f;
     public float bHopFrames = 0f;

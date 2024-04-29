@@ -4,6 +4,8 @@ using UnityEngine;
 
 public interface IMoveableObject
 {
+    public Vector2 GetDeltaX();
+
     public Vector2 GetVelocity();
 
     public Transform GetTransform();

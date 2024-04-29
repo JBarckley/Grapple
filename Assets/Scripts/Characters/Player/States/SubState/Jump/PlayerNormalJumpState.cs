@@ -23,22 +23,31 @@ public class PlayerNormalJumpState : PlayerJumpState
         // decrement the jump counter
         playerData.jumps--;
 
+        // find the ground we're jumping from
+        player.Ground(out Collider2D ground);
+
         // we enter jump state after the jump input has been found, so we just perform the jump here:
 
         // first, we start the FX
         player.AddComponent<Jump>();
 
+        Vector2 BunnyHop = Vector2.zero;
+        Vector2 MovingPlatformMomentum = Vector2.zero;
+        Vector2 NormalJump = new Vector2(player.rb.velocity.x, playerData.jumpingPower);
+
         // if bHopFrames > 0f and the player jumps, they perform a Bunny Hop (maintain momentum on the jump)
         if (playerData.bHopFrames > 0f)
         {
-            // Bunny Hopping feels good when you get slighly more speed and the jumping height is a little bit related to the speed (the higher the speed in [4f, 5f] the less y velo on the jump) 
-            player.rb.velocity = new Vector2(playerData.bHopVelocity.x * 1.15f, playerData.jumpingPower * Mathf.Clamp(4 / Mathf.Abs(playerData.bHopVelocity.x), 0.8f, 1.0f));
+            // Bunny Hopping feels good when you get slighly more speed and the jumping height is a little bit related to the speed (the higher the speed in [4f, 5f] the less y velo on the jump)
+            BunnyHop = new Vector2(playerData.bHopVelocity.x * 1.15f, playerData.jumpingPower * Mathf.Clamp(4 / Mathf.Abs(playerData.bHopVelocity.x), 0.8f, 1.0f)) - NormalJump;
         }
-        else
+        if (ground != null && ground.TryGetComponent<IMoveableObject>(out IMoveableObject moveableObject))
         {
-            // regular jump
-            player.rb.velocity = new Vector2(player.rb.velocity.x, playerData.jumpingPower);
+            MovingPlatformMomentum.Set(moveableObject.GetVelocity().x, 0);
         }
+
+        player.rb.velocity = NormalJump + BunnyHop + MovingPlatformMomentum;
+        Debug.Log(player.rb.velocity);
 
     }
 

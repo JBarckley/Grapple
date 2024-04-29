@@ -31,8 +31,6 @@ public class Jump : MonoBehaviour
         {
             parentScale = transform.parent != null ? transform.parent.localScale : Vector3.one;
 
-            Debug.Log(parentScale);
-
             workspace.Set(Mathf.Lerp(0.3f, 0.2f, t), 0.3f, 1);
             transform.localScale = workspace.Divide(parentScale);
 
@@ -49,7 +47,7 @@ public class Jump : MonoBehaviour
         {
             parentScale = transform.parent != null ? transform.parent.localScale : Vector3.one;
 
-            Debug.Log(parentScale);
+            //Debug.Log(parentScale);
 
             workspace.Set(Mathf.Lerp(0.2f, 0.3f, t), 0.3f, 1);
             transform.localScale = workspace.Divide(parentScale);
