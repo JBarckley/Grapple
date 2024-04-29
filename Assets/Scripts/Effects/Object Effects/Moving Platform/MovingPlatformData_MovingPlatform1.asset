@@ -12,8 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4e16c2e7e349002418bbb120f1c24bc7, type: 3}
   m_Name: MovingPlatformData_MovingPlatform1
   m_EditorClassIdentifier: 
-  Path:
-  - {x: 0.198, y: -1.682}
-  - {x: 1.7547741, y: -0.6854938}
-  - {x: 0.47373483, y: 1.19901}
-  - {x: 0.198, y: -1.682}
+  Path: []

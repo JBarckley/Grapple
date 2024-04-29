@@ -15,12 +15,12 @@ MonoBehaviour:
   movementVelocity: 2.5
   jumpingPower: 5
   wallSlideSpeed: 1.6
-  grapplingHookLength: 4
-  coyoteFrames: 30
+  grapplingHookLength: 2
+  coyoteFrames: 45
   bHopFrames: 0
-  bHopVelocity: {x: 0, y: 5.2406225}
-  jumps: 0
-  wallDirection: {x: -1, y: 0}
+  bHopVelocity: {x: 0, y: 4.125187}
+  jumps: 1
+  wallDirection: {x: 1, y: 0}
   xScalar: 1
   yScalar: 1
   dampeningScalar: 0.0085

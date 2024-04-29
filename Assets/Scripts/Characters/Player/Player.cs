@@ -228,7 +228,7 @@ public class Player : MonoBehaviour
         // if something does, it is the ground so we return the amount of overlaps (which is indirectly true or false of any exist)
         //return Physics2D.OverlapCircle(groundCheck.transform.position, 0.02f, groundLayer);
         Vector2 groundCheckPosition = groundCheck.transform.position;
-        return Physics2D.OverlapArea(new Vector2(groundCheckPosition.x - 0.15f, groundCheckPosition.y), new Vector2(groundCheckPosition.x + 0.15f, groundCheckPosition.y - 0.01f), groundLayer);
+        return Physics2D.OverlapArea(new Vector2(groundCheckPosition.x - 0.15f, groundCheckPosition.y), new Vector2(groundCheckPosition.x + 0.15f, groundCheckPosition.y + 0.01f), groundLayer);
     }
 
     public void Ground(out Collider2D ground)
@@ -323,6 +323,34 @@ public class Player : MonoBehaviour
         JumpBuffer = true;
         yield return new WaitForSeconds(time);
         JumpBuffer = false;
+    }
+
+    /// <summary>
+    /// Removes velocity slowly such that the player ends up with end velocity after duration based on start velocity. Requires end < start.
+    /// </summary>
+    /// <param name="start"></param>
+    /// <param name="end"></param>
+    /// <param name="duration"></param>
+    /// <returns></returns>
+    public IEnumerator RemoveVelocity(float start, float end, float duration)
+    {
+        float time = 0;
+        float t = 0;
+
+        while (time < duration)
+        {
+            time += Time.deltaTime;
+            t = time / duration;
+            // "smoother step" lerp taken from https://chicounity3d.wordpress.com/2014/05/23/how-to-lerp-like-a-pro/
+            t = t * t * t * (t * (6f * t - 15f) + 10f);
+
+            if (Mathf.Abs(rb.velocity.x) > end && Mathf.Sign(rb.velocity.x) == Mathf.Sign(start))
+            {
+                SetVelocityX(Mathf.Lerp(start, end, t));
+            }
+
+            yield return null;
+        }
     }
 
     #endregion

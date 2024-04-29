@@ -1,3 +1,4 @@
+using GrappleGame.GizmoHelper;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
@@ -43,11 +44,11 @@ public class PlayerNormalJumpState : PlayerJumpState
         }
         if (ground != null && ground.TryGetComponent<IMoveableObject>(out IMoveableObject moveableObject))
         {
-            MovingPlatformMomentum.Set(moveableObject.GetVelocity().x, 0);
+            MovingPlatformMomentum = moveableObject.GetVelocity();
+            player.StartCoroutine(player.RemoveVelocity((NormalJump + BunnyHop + MovingPlatformMomentum).x, playerData.movementVelocity, 1f));
         }
 
         player.rb.velocity = NormalJump + BunnyHop + MovingPlatformMomentum;
-        Debug.Log(player.rb.velocity);
 
     }
 

@@ -116,6 +116,7 @@ public class Grapple : MonoBehaviour
         
 
         Vector2 maxThrow = Hook.transform.position + (Vector3)aimVec;
+        Debug.Log(maxThrow);
 
         /*          SECOND:
          *          We call LerpHook which lerps the hook position to the position of the hit
