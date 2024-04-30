@@ -44,11 +44,21 @@ public class PlayerNormalJumpState : PlayerJumpState
         }
         if (ground != null && ground.TryGetComponent<IMoveableObject>(out IMoveableObject moveableObject))
         {
-            MovingPlatformMomentum = moveableObject.GetVelocity();
-            player.StartCoroutine(player.RemoveVelocity((NormalJump + BunnyHop + MovingPlatformMomentum).x, playerData.movementVelocity, 1f));
+            Vector2 platformVelocity = moveableObject.GetVelocity();
+            // if the player is moving in the same x direction as the platform
+            if (Mathf.Sign(platformVelocity.x) == Mathf.Sign(player.FacingDirection))
+            {
+                MovingPlatformMomentum = platformVelocity;
+                player.StartCoroutine(player.RemoveVelocity((NormalJump + BunnyHop + MovingPlatformMomentum).x, playerData.movementVelocity, 1f));
+            }
+            else
+            {
+                MovingPlatformMomentum = platformVelocity;
+            }
         }
 
         player.rb.velocity = NormalJump + BunnyHop + MovingPlatformMomentum;
+        Debug.Log(NormalJump + BunnyHop + MovingPlatformMomentum);
 
     }
 

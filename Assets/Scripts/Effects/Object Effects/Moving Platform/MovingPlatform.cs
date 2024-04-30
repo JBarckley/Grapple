@@ -59,19 +59,22 @@ public class MovingPlatform : MonoBehaviour, IMoveableObject
 
     private void OnDrawGizmos()
     {
-        Gizmos.color = Color.red;
-        Gizmos.DrawLine(transform.position, transform.position + (Vector3)GetVelocity());
-        //Gizmos.color = Color.blue;
-        //Gizmos.DrawLine(transform.position, transform.position + (Vector3)(data[currentNode] - data[previousNode]));
+        if (Application.isPlaying)
+        {
+            Gizmos.color = Color.red;
+            Gizmos.DrawLine(transform.position, transform.position + (Vector3)GetVelocity());
+            //Gizmos.color = Color.blue;
+            //Gizmos.DrawLine(transform.position, transform.position + (Vector3)(data[currentNode] - data[previousNode]));
+        }
     }
 
     private void OnValidate()
     {
         // if an asset does not exists at the filePath
+        filePath = baseFilePath + "MovingPlatformData_" + name + ".asset";
         if (!AssetDatabase.LoadAssetAtPath<MovingPlatformData>(filePath))
         {
             Debug.Log("couldn't find Moving Platform data, generating new file");
-            filePath = baseFilePath + "MovingPlatformData_" + name + ".asset";
             AssetDatabase.CreateAsset(new MovingPlatformData(), filePath);
         }
         data = AssetDatabase.LoadAssetAtPath<MovingPlatformData>(filePath);
@@ -85,8 +88,9 @@ public class MovingPlatform : MonoBehaviour, IMoveableObject
 
     public Vector2 GetVelocity()
     {
+        float _t = time / duration;
         // this is the derivative of x(t) = t * t * t * (t * (6f * t - 15f) + 10f);
-        float _velocity = 30 * time * time * ((time * time) - (2 * time) + 1);
+        float _velocity = 30 * _t * _t * ((_t * _t) - (2 * _t) + 1);
         Vector2 _velocityDirection = (data[currentNode] - data[previousNode]).normalized;
         return _velocityDirection * _velocity * 2;
     }
