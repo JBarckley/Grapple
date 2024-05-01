@@ -38,8 +38,8 @@ public class Player : MonoBehaviour
     public SpriteRenderer Sprite { get; private set; }
 
     public AnimationHandler AnimationHandler { get; private set; }
-
-    public Animator Animator { get; private set; }
+    
+    public ParticleHandler ParticleHandler { get; private set; }
 
     public Grapple Grapple { get; private set; }
 
@@ -83,6 +83,7 @@ public class Player : MonoBehaviour
         InputHandler = GetComponent<PlayerInputHandler>();
         // this is referenced by AirState, which the player may start in
         AnimationHandler = this.AddComponent<AnimationHandler>();
+        ParticleHandler = this.AddComponent<ParticleHandler>();
         // logic pertaining to the VFX of the grappling rope
         Grapple = GetComponent<Grapple>();
         // functions related to moving the camera on command
@@ -113,7 +114,6 @@ public class Player : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         Sprite = GetComponent<SpriteRenderer>();
-        Animator = GetComponent<Animator>();
         capsuleCollider = GetComponent<CapsuleCollider2D>();
 
         StartingPoint = transform.position;

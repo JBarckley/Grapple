@@ -30,6 +30,8 @@ public class PlayerCoyoteState : PlayerState
 
         if (playerData.coyoteFrames <= 0)
         {
+            // if the player was in a moving platform state and is now falling:
+            player.transform.SetParent(null);
             stateMachine.ToState(player.A_MoveState);
         }
     }

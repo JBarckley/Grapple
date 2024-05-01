@@ -62,6 +62,8 @@ public class PlayerNormalJumpState : PlayerJumpState
         player.rb.velocity = NormalJump + BunnyHop + (MovingPlatformMomentum * 0.75f);
         //Debug.Log(NormalJump + BunnyHop + MovingPlatformMomentum);
 
+        player.ParticleHandler.SpawnJumpParticles();
+
         player.transform.SetParent(null);
 
     }

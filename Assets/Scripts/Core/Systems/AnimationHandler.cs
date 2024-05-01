@@ -16,18 +16,6 @@ public class AnimationHandler : MonoBehaviour
         animator = GetComponent<Animator>();
     }
 
-    /*
-    // if the player is spamming left and right changing directions quickly, they'll enter the idle state in between moving left and right which will introduce
-    // a pause between the continuation of the walk animation. This code ensures that behavior will not transition to an idle animation immediately and continue the move in the other direction.
-    public IEnumerator Idle()
-    {
-        yield return new WaitForSeconds(0.05f);
-        if (player.InputHandler.MoveVector.x == 0)
-        {
-            animator.SetTrigger("Idle");
-        }
-    }*/
-
     public void Idle()
     {
         animator.Play("Idle");

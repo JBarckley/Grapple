@@ -12,7 +12,6 @@ public class PlayerGroundCoyoteState : PlayerCoyoteState
     {
         base.Exit();
 
-        player.transform.SetParent(null);
         playerData.jumps--;
     }
 
