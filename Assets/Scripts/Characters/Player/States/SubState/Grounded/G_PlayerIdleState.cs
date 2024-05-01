@@ -19,7 +19,6 @@ public class G_PlayerIdleState : PlayerGroundedState
     {
         base.Enter();
 
-        //player.AnimationHandler.StartCoroutine(player.AnimationHandler.Idle());
         player.AnimationHandler.Idle();
     }
 

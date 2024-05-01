@@ -5,6 +5,8 @@ using UnityEngine;
 public class PlayerGroundedState : PlayerState
 {
 
+    private Collider2D ground;
+
     public PlayerGroundedState(Player player, PlayerStateMachine stateMachine, PlayerData playerData, string stateName) : base(player, stateMachine, playerData, stateName)
     {
     }
@@ -23,10 +25,11 @@ public class PlayerGroundedState : PlayerState
         // reset coyote frames when player is grounded
         playerData.coyoteFrames = 45f;
 
+
         player.Ground(out Collider2D ground);
+        Debug.Log(ground);
         if (ground != null && ground.TryGetComponent<IMoveableObject>(out IMoveableObject moveableObject))
         {
-            //player.transform.position -= new Vector3(0.014f, 0);
             player.transform.SetParent(ground.transform, true);
         }
 
@@ -41,7 +44,7 @@ public class PlayerGroundedState : PlayerState
     {
         base.Exit();
 
-        player.transform.SetParent(null);
+        
     }
 
     public override void PhysicsUpdate()
@@ -59,7 +62,18 @@ public class PlayerGroundedState : PlayerState
         {
             // here, if we fall off a platform without jumping, we still decrement the double jump counter
             stateMachine.ToState(player.GroundCoyoteState);
-        }
+        } 
+
+        /*
+        else if (ground == null)
+        {
+            player.Ground(out ground);
+            if (ground != null && ground.TryGetComponent<IMoveableObject>(out IMoveableObject moveableObject))
+            {
+                //player.transform.position -= new Vector3(0.014f, 0);
+                player.transform.SetParent(ground.transform, true);
+            }
+        }*/
 
     }
 }

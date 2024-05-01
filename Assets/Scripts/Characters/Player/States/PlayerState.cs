@@ -36,7 +36,7 @@ public class PlayerState
         player.InputHandler.PlayerCancelJump += OnCancelJump;
         player.InputHandler.PlayerWallAttach += OnWallAttach;
         player.InputHandler.PlayerGrapple += OnGrapple;
-        //Debug.Log(stateName);
+        Debug.Log(stateName);
     }
 
     public virtual void Exit()

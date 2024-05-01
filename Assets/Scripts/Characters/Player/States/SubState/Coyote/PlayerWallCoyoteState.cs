@@ -12,4 +12,11 @@ public class PlayerWallCoyoteState : PlayerCoyoteState
     {
         stateMachine.ToState(player.WallJumpState);
     }
+
+    public override void Update()
+    {
+        base.Update();
+
+        player.SetVelocityX(playerData.movementVelocity * moveInput.x);
+    }
 }

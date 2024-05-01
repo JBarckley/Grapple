@@ -116,7 +116,6 @@ public class Grapple : MonoBehaviour
         
 
         Vector2 maxThrow = Hook.transform.position + (Vector3)aimVec;
-        Debug.Log(maxThrow);
 
         /*          SECOND:
          *          We call LerpHook which lerps the hook position to the position of the hit
@@ -124,11 +123,11 @@ public class Grapple : MonoBehaviour
 
         if (hitPoint != Vector2.zero)
         {
-            StartCoroutine(LerpHook(hitPoint, 0.05f, true));
+            StartCoroutine(LerpHook(hitPoint, 0.05f, true, player.FacingDirection));
         }
         else
         {
-            StartCoroutine(LerpHook(maxThrow, 0.1f, false));
+            StartCoroutine(LerpHook(maxThrow, 0.1f, false, player.FacingDirection));
         }
 
         /*      THIRD:
@@ -186,7 +185,7 @@ public class Grapple : MonoBehaviour
         Hook.transform.rotation = rotation;
     }
 
-    public IEnumerator LerpHook(Vector2 targetPos, float duration, bool hit)
+    public IEnumerator LerpHook(Vector2 targetPos, float duration, bool hit, float direction)
     {
         float time = 0;
         float t = 0;
@@ -241,7 +240,7 @@ public class Grapple : MonoBehaviour
              * 
              */
 
-            if (player.transform.right.x < 0)
+            if (direction < 0)
             {
                 player.rb.velocity = new Vector2(Mathf.Clamp(player.rb.velocity.x, Mathf.NegativeInfinity, 0), Mathf.Clamp(player.rb.velocity.y, Mathf.NegativeInfinity, 0));
             }

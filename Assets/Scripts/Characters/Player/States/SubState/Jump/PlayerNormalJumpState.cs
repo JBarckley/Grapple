@@ -25,7 +25,7 @@ public class PlayerNormalJumpState : PlayerJumpState
         playerData.jumps--;
 
         // find the ground we're jumping from
-        player.Ground(out Collider2D ground);
+        Transform ground = player.transform.parent;
 
         // we enter jump state after the jump input has been found, so we just perform the jump here:
 
@@ -42,6 +42,8 @@ public class PlayerNormalJumpState : PlayerJumpState
             // Bunny Hopping feels good when you get slighly more speed and the jumping height is a little bit related to the speed (the higher the speed in [4f, 5f] the less y velo on the jump)
             BunnyHop = new Vector2(playerData.bHopVelocity.x * 1.15f, playerData.jumpingPower * Mathf.Clamp(4 / Mathf.Abs(playerData.bHopVelocity.x), 0.8f, 1.0f)) - NormalJump;
         }
+
+        // the trick here while using ground as the player's transform's parent is that we don't reset parentage until after coyote frames, so this WORKS with coyote time!!
         if (ground != null && ground.TryGetComponent<IMoveableObject>(out IMoveableObject moveableObject))
         {
             Vector2 platformVelocity = moveableObject.GetVelocity();
@@ -57,8 +59,10 @@ public class PlayerNormalJumpState : PlayerJumpState
             }
         }
 
-        player.rb.velocity = NormalJump + BunnyHop + MovingPlatformMomentum;
-        Debug.Log(NormalJump + BunnyHop + MovingPlatformMomentum);
+        player.rb.velocity = NormalJump + BunnyHop + (MovingPlatformMomentum * 0.75f);
+        //Debug.Log(NormalJump + BunnyHop + MovingPlatformMomentum);
+
+        player.transform.SetParent(null);
 
     }
 

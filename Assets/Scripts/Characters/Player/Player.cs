@@ -145,8 +145,8 @@ public class Player : MonoBehaviour
         Vector3 bottomR = wallCheck.transform.position + new Vector3(transform.right.x * 0.02f, -0.22f, 0);
         //Gizmos.DrawLineList(new ReadOnlySpan<Vector3>(new Vector3[] { topL, topR, topR, bottomR, bottomR, bottomL, bottomL, topL }));
         GizmoHelper.DrawBox(new Vector3[] { topL, topR, bottomL, bottomR });
-        topL = groundCheck.transform.position - new Vector3(0.15f, 0);
-        topR = groundCheck.transform.position + new Vector3(0.15f, 0);
+        topL = groundCheck.transform.position - new Vector3(0.12f, 0);
+        topR = groundCheck.transform.position + new Vector3(0.12f, 0);
         bottomL = topL - new Vector3(0, 0.03f);
         bottomR = topR - new Vector3(0, 0.03f);
         GizmoHelper.DrawBox(new Vector3[] { topL, topR, bottomL, bottomR });
@@ -223,19 +223,26 @@ public class Player : MonoBehaviour
 
     public bool IsGrounded()
     {
-
         // create a 0.01 radius circle around the position of the groundcheck object (the bottom pixel of the player) and see if anything on the groundLayer overlaps
         // if something does, it is the ground so we return the amount of overlaps (which is indirectly true or false of any exist)
         //return Physics2D.OverlapCircle(groundCheck.transform.position, 0.02f, groundLayer);
         Vector2 groundCheckPosition = groundCheck.transform.position;
-        return Physics2D.OverlapArea(new Vector2(groundCheckPosition.x - 0.15f, groundCheckPosition.y), new Vector2(groundCheckPosition.x + 0.15f, groundCheckPosition.y + 0.01f), groundLayer);
+        Collider2D ground = Physics2D.OverlapArea(new Vector2(groundCheckPosition.x - 0.12f, groundCheckPosition.y), new Vector2(groundCheckPosition.x + 0.12f, groundCheckPosition.y - 0.01f), groundLayer);
+        return ground;
     }
 
     public void Ground(out Collider2D ground)
     {
+        Vector2 groundCheckPosition = groundCheck.transform.position;
 
-        RaycastHit2D _ground = Physics2D.Raycast(transform.position, Vector2.down, 1f, groundLayer);
-        ground = _ground.collider;
+        RaycastHit2D _ground = Physics2D.Raycast(groundCheckPosition, Vector2.down, 0.5f, groundLayer);
+        RaycastHit2D _lground = Physics2D.Raycast(groundCheckPosition + new Vector2(-0.16f, 0), Vector2.down, 0.5f, groundLayer);
+        RaycastHit2D _rground = Physics2D.Raycast(groundCheckPosition + new Vector2(0.16f, 0), Vector2.down, 0.5f, groundLayer);
+        Debug.Log("left: " + _lground + " middle: " + _ground + " right: " + _rground);
+        ground = _ground ? _ground.collider :
+                    _lground ? _lground.collider :
+                        _rground ? _rground.collider :
+                            null;
     }
 
     public bool IsWalled()
