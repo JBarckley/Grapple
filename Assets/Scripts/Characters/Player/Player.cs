@@ -2,10 +2,12 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
-using UnityEditor.Animations;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using GrappleGame.GizmoHelper;
+using UnityEngine.UIElements;
+using UnityEngine.Rendering.Universal;
+using UnityEngine.Rendering;
 
 public class Player : MonoBehaviour
 {
@@ -29,6 +31,8 @@ public class Player : MonoBehaviour
     #endregion
 
     #region Components
+    public GameController Controller { get; private set; }
+
     public PlayerInputHandler InputHandler { get; private set; }
 
     public Rigidbody2D rb { get; private set; }
@@ -79,16 +83,6 @@ public class Player : MonoBehaviour
     #region Unity Hooks
     private void Awake()
     {
-        // we need this at the start of awake so the states can reference it as a part of them being observers in the observer pattern
-        InputHandler = GetComponent<PlayerInputHandler>();
-        // this is referenced by AirState, which the player may start in
-        AnimationHandler = this.AddComponent<AnimationHandler>();
-        ParticleHandler = this.AddComponent<ParticleHandler>();
-        // logic pertaining to the VFX of the grappling rope
-        Grapple = GetComponent<Grapple>();
-        // functions related to moving the camera on command
-        MainCamera = FindObjectOfType<MainCamera>();
-
         StateMachine = new PlayerStateMachine();
 
         G_IdleState = new G_PlayerIdleState(this, StateMachine, playerData, "g_idle");
@@ -112,6 +106,17 @@ public class Player : MonoBehaviour
 
     private void Start()
     {
+        Controller = FindObjectOfType<GameController>();
+        // we need this at the start of awake so the states can reference it as a part of them being observers in the observer pattern
+        InputHandler = GetComponent<PlayerInputHandler>();
+        // this is referenced by AirState, which the player may start in
+        AnimationHandler = Controller.animationHandler;
+        ParticleHandler = Controller.particleHandler;
+        // logic pertaining to the VFX of the grappling rope
+        Grapple = GetComponent<Grapple>();
+        // functions related to moving the camera on command
+        MainCamera = FindObjectOfType<MainCamera>();
+
         rb = GetComponent<Rigidbody2D>();
         Sprite = GetComponent<SpriteRenderer>();
         capsuleCollider = GetComponent<CapsuleCollider2D>();
@@ -127,6 +132,11 @@ public class Player : MonoBehaviour
 
     void Update()
     {
+        //UniversalRenderPipelineAsset urp = (UniversalRenderPipelineAsset)GraphicsSettings.currentRenderPipeline;
+        //urp.renderScale = 0.5f;
+        //urp.upscalingFilter = UpscalingFilterSelection.Point;
+        //Debug.Log(ScalableBufferManager.widthScaleFactor + " " + ScalableBufferManager.heightScaleFactor);
+
         CurrentVelocity = rb.velocity;
         StateMachine.CurrentState.Update();
     }
@@ -173,6 +183,7 @@ public class Player : MonoBehaviour
     public void SetVelocity(Vector2 v)
     {
         rb.velocity = v;
+        CurrentVelocity = v;
     }
     
     public void SetVelocity(float x, float y)
@@ -344,8 +355,21 @@ public class Player : MonoBehaviour
         float time = 0;
         float t = 0;
 
+        Vector2 _currentVelocity = CurrentVelocity;
+
+        Debug.Log(_currentVelocity.x + " " + rb.velocity);
+
         while (time < duration)
         {
+            _currentVelocity = CurrentVelocity;
+
+            // if the player's velocity is altered from somewhere else in the codebase
+            if (_currentVelocity.x != rb.velocity.x)
+            {
+                Debug.Log("breaking");
+                break;
+            }
+
             time += Time.deltaTime;
             t = time / duration;
             // "smoother step" lerp taken from https://chicounity3d.wordpress.com/2014/05/23/how-to-lerp-like-a-pro/

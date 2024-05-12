@@ -6,15 +6,16 @@ using UnityEngine;
 
 public class ParticleHandler : MonoBehaviour
 {
+    GameController controller;
     Player player;
 
-    Object JumpParticles;
+    [SerializeField]
+    GameObject JumpParticles;
 
-    void Awake()
+    void Start()
     {
-        player = GetComponent<Player>();
-
-        JumpParticles = AssetDatabase.LoadAssetAtPath<Object>("Assets/Effects/Particle Systems/Jump/JumpParticleSystem.prefab");
+        controller = GetComponent<GameController>();
+        player = controller.player;
     }
 
     public void SpawnJumpParticles(float xOffset = 0, float yOffset = 0)

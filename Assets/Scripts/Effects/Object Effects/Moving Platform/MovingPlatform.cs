@@ -7,11 +7,10 @@ using GrappleGame.Math;
 
 public class MovingPlatform : MonoBehaviour, IMoveableObject
 {
-    public MovingPlatformData data;
-    public Vector2 DeltaX { get; private set; }
+    //public MovingPlatformData data;
 
-    private readonly string baseFilePath = "Assets/Scripts/Effects/Object Effects/Moving Platform/";
-    public string filePath = "";
+    public List<Vector2> platformData = new List<Vector2>();
+    public Vector2 DeltaX { get; private set; }
 
     // this represents the current node the platform is moving towards
     private int currentNode = 1;
@@ -23,24 +22,25 @@ public class MovingPlatform : MonoBehaviour, IMoveableObject
     [SerializeField]
     public float duration;
 
-    private void Start()
+    void Awake()
     {
-        filePath = baseFilePath + "MovingPlatformData_" + name + ".asset";
-        data = AssetDatabase.LoadAssetAtPath<MovingPlatformData>(filePath);
-    }
+        platformData.Add(new Vector2(-2.58f, -1.68f));
+        platformData.Add(new Vector2(2.33f, -1.68f));
+        platformData.Add(new Vector2(-2.58f, -1.68f));
+    }   
 
     void Update()
     {
-        if (Math.Near(transform.position, data[currentNode], 0.01f))
+        if (Math.Near(transform.position, platformData[currentNode], 0.01f))
         {
             previousNode = currentNode;
-            currentNode = (currentNode + 1) % data.Count();
+            currentNode = (currentNode + 1) % platformData.Count;
             time = 0;
         }
 
         lastT = t;
-        Vector2 previousPoint = data[previousNode];
-        Vector2 currentPoint = data[currentNode];
+        Vector2 previousPoint = platformData[previousNode];
+        Vector2 currentPoint = platformData[currentNode];
         Vector2 currentPath = currentPoint - previousPoint;
 
         time += Time.deltaTime;
@@ -68,18 +68,6 @@ public class MovingPlatform : MonoBehaviour, IMoveableObject
         }
     }
 
-    private void OnValidate()
-    {
-        // if an asset does not exists at the filePath
-        filePath = baseFilePath + "MovingPlatformData_" + name + ".asset";
-        if (!AssetDatabase.LoadAssetAtPath<MovingPlatformData>(filePath))
-        {
-            Debug.Log("couldn't find Moving Platform data, generating new file");
-            AssetDatabase.CreateAsset(new MovingPlatformData(), filePath);
-        }
-        data = AssetDatabase.LoadAssetAtPath<MovingPlatformData>(filePath);
-    }
-
     public Vector2 GetDeltaX()
     {
         //Debug.Log(Velocity);
@@ -91,7 +79,7 @@ public class MovingPlatform : MonoBehaviour, IMoveableObject
         float _t = time / duration;
         // this is the derivative of x(t) = t * t * t * (t * (6f * t - 15f) + 10f);
         float _velocity = 30 * _t * _t * ((_t * _t) - (2 * _t) + 1);
-        Vector2 _velocityDirection = (data[currentNode] - data[previousNode]).normalized;
+        Vector2 _velocityDirection = (platformData[currentNode] - platformData[previousNode]).normalized;
         return _velocityDirection * _velocity * 2;
     }
 

@@ -1,19 +1,21 @@
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
-using UnityEditor.Animations;
 using UnityEngine;
 
 public class AnimationHandler : MonoBehaviour
 {
+    private GameController controller;
     private Animator animator;
     private Player player;
 
-    private void Awake()
+    private void Start()
     {
-        // gets the player's animator & player
-        player = GetComponent<Player>();
-        animator = GetComponent<Animator>();
+        controller = GetComponent<GameController>();
+
+        // gets the player & their animator
+        player = controller.player;
+        animator = player.GetComponent<Animator>();
     }
 
     public void Idle()
